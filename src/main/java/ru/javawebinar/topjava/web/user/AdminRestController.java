@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web.user;
 
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class AdminRestController extends AbstractUserController {
 
     @Override
     public void update(User user, int id) {
-        super.update(user, id);
+        super.update(user, SecurityUtil.getAuthUserId());
     }
 
     @Override

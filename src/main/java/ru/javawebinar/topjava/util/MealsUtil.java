@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,15 +27,24 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
 
-    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> getTos(List<Meal> meals, int caloriesPerDay) {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
-    public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
-        return filterByPredicate(meals, caloriesPerDay, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
+    public static List<Meal> filterByDate(List<Meal> meals, String startDate, String endDate) {
+        if (startDate == null || endDate == null) return meals;
+        else
+            return meals.stream().filter(meal -> DateTimeUtil.isDateInclusive(meal.getDate(), startDate, endDate)).collect(Collectors.toList());
     }
 
-    private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
+    public static List<Meal> filterByTime(List<Meal> meals, String startTime, String endTime) {
+        if (startTime == null || endTime == null) return meals;
+        else
+            return meals.stream().filter(meal -> DateTimeUtil.isTimeInclusive(meal.getTime(), startTime, endTime)).collect(Collectors.toList());
+    }
+
+    private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<
+            Meal> filter) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))

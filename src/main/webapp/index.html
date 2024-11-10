@@ -8,6 +8,14 @@
 <hr>
 <ul style="font-size: large">
     <li><a href="users">Users</a></li>
+    <form method="get" action="meals">
+        <label for="authUser-select">Зайти как</label>
+        <select name="authUserId" id="authUser-select">
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        </select>
+        <button type="submit">Войти</button>
+    </form>
     <li><a href="meals">Meals</a></li>
 </ul>
 </body>
