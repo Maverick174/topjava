@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="spring/spring-db.xml"/>
+
+    <!-- Переопределение бинов для тестирования -->
+    <bean id="mealService" class="ru.javawebinar.topjava.service.MealService">
+        <constructor-arg ref="jdbcMealRepository"/> <!-- Используйте нужный репозиторий -->
+    </bean>
+    <bean id="userService" class="ru.javawebinar.topjava.service.UserService">
+        <constructor-arg ref="jdbcUserRepository"/> <!-- Используйте нужный репозиторий -->
+    </bean>
+
+    <bean id="jdbcMealRepository" class="ru.javawebinar.topjava.repository.jdbc.JdbcMealRepository"/>
+    <bean id="jdbcUserRepository" class="ru.javawebinar.topjava.repository.jdbc.JdbcUserRepository"/>
+</beans>

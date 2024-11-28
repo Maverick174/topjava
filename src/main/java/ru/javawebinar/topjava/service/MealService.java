@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
@@ -21,12 +22,16 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal get(int id, int userId) {
-        return checkNotFound(repository.get(id, userId), id);
+    public Meal create(Meal meal, int userId) {
+        return repository.save(meal, userId);
     }
 
     public void delete(int id, int userId) {
         checkNotFound(repository.delete(id, userId), id);
+    }
+
+    public Meal get(int id, int userId) {
+        return checkNotFound(repository.get(id, userId), id);
     }
 
     public List<Meal> getBetweenInclusive(@Nullable LocalDate startDate, @Nullable LocalDate endDate, int userId) {
@@ -39,9 +44,5 @@ public class MealService {
 
     public void update(Meal meal, int userId) {
         checkNotFound(repository.save(meal, userId), meal.getId());
-    }
-
-    public Meal create(Meal meal, int userId) {
-        return repository.save(meal, userId);
     }
 }

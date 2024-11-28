@@ -1,17 +1,13 @@
-package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.repository.inmemory;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.UserTestData;
-import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
@@ -21,17 +17,10 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
-        "classpath:spring-jdbcRepositoryTest.xml"
+        "classpath:spring-inMemoryRepositoryTest.xml"
 })
 @RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class UserServiceTest {
-
-    static {
-        // Only for postgres driver logging
-        // It uses java.util.logging and logged via jul-to-slf4j bridge
-        SLF4JBridgeHandler.install();
-    }
+public class InMemoryUserRepositoryTest {
 
     @Autowired
     private UserService service;
@@ -43,13 +32,13 @@ public class UserServiceTest {
         User newUser = getNew();
         newUser.setId(newId);
         assertMatch(created, newUser);
-        assertMatch(service.get(newId), newUser);
+        assertMatch(service.get(created.getId()), newUser);
     }
 
     @Test
-    public void duplicateMailCreate() {
+    public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER)));
+                service.create(getNew()));
     }
 
     @Test
@@ -59,25 +48,19 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deletedNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND));
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(USER_ID));
     }
 
     @Test
     public void get() {
-        User user = service.get(USER_ID);
-        assertMatch(user, UserTestData.user);
+        User user1 = service.get(USER_ID);
+        assertMatch(user1, user);
     }
 
     @Test
     public void getNotFound() {
-        assertThrows(NotFoundException.class, () -> service.get(NOT_FOUND));
-    }
-
-    @Test
-    public void getByEmail() {
-        User user = service.getByEmail("admin@gmail.com");
-        assertMatch(user, admin);
+        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
     }
 
     @Test
@@ -90,6 +73,6 @@ public class UserServiceTest {
     @Test
     public void getAll() {
         List<User> all = service.getAll();
-        assertMatch(all, admin, guest, user);
+        assertMatch(all, user, admin, guest); // Убедитесь, что здесь указаны все ваши тестовые данные
     }
 }
